@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | Admin Dashboard</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- 🔹 Header -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>Admin Panel</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html">Online Test</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 🔹 Dashboard -->
+  <section class="dashboard-container">
+    <h2>Welcome, Admin</h2>
+    <div class="dashboard-grid">
+
+      <!-- Upload Study Materials -->
+      <div class="dashboard-card">
+        <h3>📘 Upload Study Materials</h3>
+        <form id="uploadMaterialForm" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="materialTitle">Title</label>
+            <input type="text" id="materialTitle" name="materialTitle" placeholder="Enter material title" required>
+          </div>
+          <div class="form-group">
+            <label for="materialFile">Select File (PDF)</label>
+            <input type="file" id="materialFile" name="materialFile" accept="application/pdf" required>
+          </div>
+          <div class="form-group">
+            <label for="category">Category</label>
+            <select id="category" name="category" required>
+              <option value="">--Select Category--</option>
+              <option value="PGTRB">PGTRB</option>
+              <option value="PolytechnicTRB">Polytechnic TRB</option>
+              <option value="ArtsScienceTRB">Arts & Science TRB</option>
+              <option value="SET">SET</option>
+            </select>
+          </div>
+          <button type="submit" class="btn">Upload</button>
+        </form>
+      </div>
+
+      <!-- Create Online Test -->
+      <div class="dashboard-card">
+        <h3>📝 Create New Test</h3>
+        <form id="createTestForm">
+          <div class="form-group">
+            <label for="testTitle">Test Title</label>
+            <input type="text" id="testTitle" name="testTitle" placeholder="Enter test title" required>
+          </div>
+          <div class="form-group">
+            <label for="testTimer">Test Duration (mins)</label>
+            <input type="number" id="testTimer" name="testTimer" placeholder="e.g. 30" required>
+          </div>
+          <div id="questionContainer"></div>
+          <button type="button" class="btn" onclick="addQuestion()">➕ Add Question</button>
+          <button type="submit" class="btn">Publish Test</button>
+        </form>
+      </div>
+
+      <!-- Analytics -->
+      <div class="dashboard-card">
+        <h3>📊 Analytics</h3>
+        <ul>
+          <li>Total Users: <span id="totalUsers">120</span></li>
+          <li>Tests Published: <span id="totalTests">15</span></li>
+          <li>Materials Uploaded: <span id="totalMaterials">45</span></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>© 2025 ChemGuide Admin Panel</p>
+  </footer>
+
+  <script src="assets/js/admin.js"></script>
+  <script>
+    // Dynamic Question Adding
+    function addQuestion() {
+      const container = document.getElementById("questionContainer");
+      const qIndex = container.children.length + 1;
+
+      const questionHTML = `
+        <div class="question-block">
+          <h4>Question ${qIndex}</h4>
+          <input type="text" name="question${qIndex}" placeholder="Enter question" required>
+          <input type="text" name="optionA${qIndex}" placeholder="Option A" required>
+          <input type="text" name="optionB${qIndex}" placeholder="Option B" required>
+          <input type="text" name="optionC${qIndex}" placeholder="Option C" required>
+          <input type="text" name="optionD${qIndex}" placeholder="Option D" required>
+          <select name="correct${qIndex}" required>
+            <option value="">--Correct Answer--</option>
+            <option value="A">Option A</option>
+            <option value="B">Option B</option>
+            <option value="C">Option C</option>
+            <option value="D">Option D</option>
+          </select>
+          <input type="text" name="description${qIndex}" placeholder="Explanation/Description">
+          <input type="url" name="video${qIndex}" placeholder="Reference Video URL">
+          <hr>
+        </div>
+      `;
+
+      container.insertAdjacentHTML("beforeend", questionHTML);
+    }
+
+    // Temporary Form Handlers
+    document.getElementById("uploadMaterialForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("✅ Material uploaded successfully!");
+    });
+
+    document.getElementById("createTestForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      alert("✅ Test published successfully!");
+    });
+  </script>
+</body>
+</html>

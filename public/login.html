@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | Login</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- 🔹 Header -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>ChemGuide</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html">Online Test</a></li>
+        <li><a href="login.html" class="active">Account</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 🔹 Login Section -->
+  <section class="auth-container">
+    <div class="auth-box">
+      <h2>Login to ChemGuide</h2>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email / Username</label>
+          <input type="text" id="email" name="email" placeholder="Enter your email or username" required>
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" placeholder="Enter your password" required>
+        </div>
+
+        <div class="form-group">
+          <label for="role">Login as:</label>
+          <select id="role" name="role">
+            <option value="user">Student</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn">Login</button>
+      </form>
+
+      <p class="auth-text">Don’t have an account? <a href="register.html">Register here</a></p>
+    </div>
+  </section>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>© 2025 ChemGuide. All rights reserved.</p>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+  <script>
+    // Temporary login logic (frontend)
+    document.getElementById("loginForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const email = document.getElementById("email").value;
+      const role = document.getElementById("role").value;
+
+      // In future: Send POST request to backend (/api/auth/login)
+      if (role === "admin") {
+        window.location.href = "admin_dashboard.html";
+      } else {
+        window.location.href = "user_dashboard.html";
+      }
+    });
+  </script>
+</body>
+</html>

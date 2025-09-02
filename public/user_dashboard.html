@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | User Dashboard</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- 🔹 Header -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>ChemGuide</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html">Online Test</a></li>
+        <li><a href="user_dashboard.html" class="active">Dashboard</a></li>
+        <li><a href="login.html">Logout</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 🔹 Dashboard Container -->
+  <section class="dashboard-container">
+    <h2>👤 Welcome, <span id="username">Student</span></h2>
+    <p>Here’s your recent activity summary:</p>
+
+    <!-- User Stats -->
+    <div class="dashboard-stats">
+      <div class="stat-card">
+        <h3>Tests Attempted</h3>
+        <p id="tests-count">5</p>
+      </div>
+      <div class="stat-card">
+        <h3>Average Score</h3>
+        <p id="avg-score">78%</p>
+      </div>
+      <div class="stat-card">
+        <h3>Materials Downloaded</h3>
+        <p id="downloads-count">12</p>
+      </div>
+    </div>
+
+    <!-- Recent Tests -->
+    <div class="dashboard-section">
+      <h3>📝 Recent Tests</h3>
+      <table class="dashboard-table">
+        <thead>
+          <tr>
+            <th>Test Name</th>
+            <th>Score</th>
+            <th>Date</th>
+            <th>Review</th>
+          </tr>
+        </thead>
+        <tbody id="recent-tests">
+          <tr>
+            <td>PGTRB Chemistry Mock 1</td>
+            <td>85%</td>
+            <td>02-Sep-2025</td>
+            <td><a href="#">View</a></td>
+          </tr>
+          <tr>
+            <td>Polytechnic TRB Organic Test</td>
+            <td>72%</td>
+            <td>28-Aug-2025</td>
+            <td><a href="#">View</a></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Recent Downloads -->
+    <div class="dashboard-section">
+      <h3>📥 Recent Downloads</h3>
+      <ul id="recent-downloads">
+        <li><a href="uploads/pgtrb_chemistry_notes.pdf" target="_blank">PGTRB Chemistry Notes</a></li>
+        <li><a href="uploads/set_physical.pdf" target="_blank">SET Physical Chemistry</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>© 2025 ChemGuide | User Dashboard</p>
+  </footer>
+
+  <script src="assets/js/dashboard.js"></script>
+</body>
+</html>

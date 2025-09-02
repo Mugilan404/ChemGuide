@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | Online Test</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <!-- 🔹 Header -->
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>ChemGuide</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html" class="active">Online Test</a></li>
+        <li><a href="login.html">Account</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- 🔹 Test Section -->
+  <section class="test-container">
+    <h2>📝 Online Test</h2>
+    <div class="test-info">
+      <p><strong>Test Title:</strong> Sample Chemistry Test</p>
+      <p><strong>Duration:</strong> <span id="timer">10:00</span></p>
+    </div>
+
+    <form id="testForm">
+      <!-- Example Question 1 -->
+      <div class="question-block">
+        <h3>Q1. Which of the following is a noble gas?</h3>
+        <label><input type="radio" name="q1" value="A"> Oxygen</label><br>
+        <label><input type="radio" name="q1" value="B"> Nitrogen</label><br>
+        <label><input type="radio" name="q1" value="C"> Helium</label><br>
+        <label><input type="radio" name="q1" value="D"> Hydrogen</label>
+      </div>
+
+      <!-- Example Question 2 -->
+      <div class="question-block">
+        <h3>Q2. pH of pure water is?</h3>
+        <label><input type="radio" name="q2" value="A"> 5</label><br>
+        <label><input type="radio" name="q2" value="B"> 7</label><br>
+        <label><input type="radio" name="q2" value="C"> 9</label><br>
+        <label><input type="radio" name="q2" value="D"> 11</label>
+      </div>
+
+      <!-- Submit -->
+      <button type="submit" class="btn">Submit Test</button>
+    </form>
+
+    <!-- 🔹 Results -->
+    <div id="results" class="results hidden">
+      <h2>📊 Test Results</h2>
+      <p><strong>Score:</strong> <span id="score"></span> / 2</p>
+      <div class="answer-review">
+        <h3>Answer Review</h3>
+        <ul id="answerList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 🔹 Footer -->
+  <footer>
+    <p>© 2025 ChemGuide | Online Test Portal</p>
+  </footer>
+
+  <script src="assets/js/test.js"></script>
+  <script>
+    // Timer Script (10 mins for demo)
+    let timeLeft = 10 * 60;
+    const timerEl = document.getElementById("timer");
+
+    function updateTimer() {
+      let minutes = Math.floor(timeLeft / 60);
+      let seconds = timeLeft % 60;
+      timerEl.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
+      if (timeLeft > 0) {
+        timeLeft--;
+      } else {
+        document.getElementById("testForm").submit();
+      }
+    }
+    setInterval(updateTimer, 1000);
+
+    // Handle Test Submission
+    document.getElementById("testForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const answers = { q1: "C", q2: "B" }; // ✅ Correct answers
+      const descriptions = {
+        q1: "Helium is a noble gas found in Group 18 of the periodic table.",
+        q2: "Pure water has a neutral pH of 7 at 25°C.",
+      };
+      const videos = {
+        q1: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+        q2: "https://www.youtube.com/watch?v=Vrrjwi2Qk6o"
+      };
+
+      let score = 0;
+      let answerList = "";
+
+      Object.keys(answers).forEach((q, i) => {
+        const selected = document.querySelector(`input[name=${q}]:checked`);
+        const correct = answers[q];
+        if (selected && selected.value === correct) score++;
+
+        answerList += `
+          <li>
+            <strong>Q${i+1}:</strong> Correct Answer: ${correct} <br>
+            <em>${descriptions[q]}</em><br>
+            <a href="${videos[q]}" target="_blank">📺 Reference Video</a>
+          </li>`;
+      });
+
+      document.getElementById("score").textContent = score;
+      document.getElementById("answerList").innerHTML = answerList;
+      document.getElementById("results").classList.remove("hidden");
+    });
+  </script>
+</body>
+</html>
