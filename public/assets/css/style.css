@@ -202,7 +202,7 @@ footer {
   background: rgba(0, 0, 0, 0.8);
   color: #fff;
   padding: 15px;
-  position: relative;
+  position: fixed;
   bottom: 0;
   width: 100%;
   border-top: 3px solid #fbc531;
