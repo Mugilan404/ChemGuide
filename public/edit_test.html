@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | Edit Test</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>ChemGuide</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html">Online Test</a></li>
+        <li><a href="login.html">Account</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="form-container">
+    <h2>✏️ Edit Test</h2>
+    <form id="editTestForm">
+      <label>Select Test</label>
+      <select id="testSelect"></select>
+
+      <label>Test Title</label>
+      <input type="text" name="title" id="testTitle" required>
+
+      <label>Tag</label>
+      <input type="text" name="tag" id="testTag">
+
+      <button type="submit" class="btn">Update Test</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 ChemGuide | Test Management</p>
+  </footer>
+
+  <script>
+    async function loadTests() {
+      const res = await fetch("/api/tests");
+      const tests = await res.json();
+      const select = document.getElementById("testSelect");
+      select.innerHTML = tests.map(t => `<option value="${t.id}">${t.title}</option>`).join("");
+    }
+
+    document.getElementById("testSelect").addEventListener("change", async (e) => {
+      const id = e.target.value;
+      const res = await fetch(`/api/tests/${id}`);
+      const test = await res.json();
+      document.getElementById("testTitle").value = test.title;
+      document.getElementById("testTag").value = test.tag;
+    });
+
+    document.getElementById("editTestForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const id = document.getElementById("testSelect").value;
+      const data = {
+        title: document.getElementById("testTitle").value,
+        tag: document.getElementById("testTag").value
+      };
+      const res = await fetch(`/api/tests/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) alert("✅ Test updated!");
+    });
+
+    loadTests();
+  </script>
+</body>
+</html>

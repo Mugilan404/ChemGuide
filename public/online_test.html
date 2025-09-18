@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChemGuide | Online Test</title>
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="icon" href="assets/images/logo.png" type="image/x-icon">
 </head>
 <body>
   <!-- 🔹 Header -->
@@ -23,45 +24,26 @@
     </nav>
   </header>
 
-  <!-- 🔹 Test Section -->
-  <section class="test-container">
-    <h2>📝 Online Test</h2>
-    <div class="test-info">
-      <p><strong>Test Title:</strong> Sample Chemistry Test</p>
-      <p><strong>Duration:</strong> <span id="timer">10:00</span></p>
+  <!-- 🔹 Online Tests Section -->
+  <section class="tests-container">
+    <h2>📝 Available Online Tests</h2>
+    <p>Select a test to start. You can also filter by tag.</p>
+
+    <!-- Sorting -->
+    <div class="filter-bar">
+      <label for="tagFilter">Filter by Tag:</label>
+      <select id="tagFilter">
+        <option value="all">All</option>
+        <option value="Organic">Organic</option>
+        <option value="Inorganic">Inorganic</option>
+        <option value="Physical">Physical</option>
+        <option value="General">General</option>
+      </select>
     </div>
 
-    <form id="testForm">
-      <!-- Example Question 1 -->
-      <div class="question-block">
-        <h3>Q1. Which of the following is a noble gas?</h3>
-        <label><input type="radio" name="q1" value="A"> Oxygen</label><br>
-        <label><input type="radio" name="q1" value="B"> Nitrogen</label><br>
-        <label><input type="radio" name="q1" value="C"> Helium</label><br>
-        <label><input type="radio" name="q1" value="D"> Hydrogen</label>
-      </div>
-
-      <!-- Example Question 2 -->
-      <div class="question-block">
-        <h3>Q2. pH of pure water is?</h3>
-        <label><input type="radio" name="q2" value="A"> 5</label><br>
-        <label><input type="radio" name="q2" value="B"> 7</label><br>
-        <label><input type="radio" name="q2" value="C"> 9</label><br>
-        <label><input type="radio" name="q2" value="D"> 11</label>
-      </div>
-
-      <!-- Submit -->
-      <button type="submit" class="btn">Submit Test</button>
-    </form>
-
-    <!-- 🔹 Results -->
-    <div id="results" class="results hidden">
-      <h2>📊 Test Results</h2>
-      <p><strong>Score:</strong> <span id="score"></span> / 2</p>
-      <div class="answer-review">
-        <h3>Answer Review</h3>
-        <ul id="answerList"></ul>
-      </div>
+    <!-- Test List -->
+    <div id="testsGrid" class="tests-grid">
+      <!-- Tests will be loaded dynamically -->
     </div>
   </section>
 
@@ -70,58 +52,56 @@
     <p>© 2025 ChemGuide | Online Test Portal</p>
   </footer>
 
-  <script src="assets/js/test.js"></script>
   <script>
-    // Timer Script (10 mins for demo)
-    let timeLeft = 10 * 60;
-    const timerEl = document.getElementById("timer");
+    async function fetchTests() {
+      try {
+        const res = await fetch('/api/tests'); // Backend API
+        const tests = await res.json();
+        renderTests(tests);
 
-    function updateTimer() {
-      let minutes = Math.floor(timeLeft / 60);
-      let seconds = timeLeft % 60;
-      timerEl.textContent = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
-      if (timeLeft > 0) {
-        timeLeft--;
-      } else {
-        document.getElementById("testForm").submit();
+        // Handle filtering
+        document.getElementById("tagFilter").addEventListener("change", function() {
+          const selectedTag = this.value;
+          const filtered = selectedTag === "all" ? tests : tests.filter(t => t.tag === selectedTag);
+          renderTests(filtered);
+        });
+
+      } catch (err) {
+        console.error("❌ Error fetching tests:", err);
       }
     }
-    setInterval(updateTimer, 1000);
 
-    // Handle Test Submission
-    document.getElementById("testForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    function renderTests(tests) {
+      const container = document.getElementById("testsGrid");
+      container.innerHTML = "";
 
-      const answers = { q1: "C", q2: "B" }; // ✅ Correct answers
-      const descriptions = {
-        q1: "Helium is a noble gas found in Group 18 of the periodic table.",
-        q2: "Pure water has a neutral pH of 7 at 25°C.",
-      };
-      const videos = {
-        q1: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-        q2: "https://www.youtube.com/watch?v=Vrrjwi2Qk6o"
-      };
+      if (tests.length === 0) {
+        container.innerHTML = "<p>No tests available.</p>";
+        return;
+      }
 
-      let score = 0;
-      let answerList = "";
+      tests.forEach(test => {
+        const card = document.createElement("div");
+        card.classList.add("test-card");
 
-      Object.keys(answers).forEach((q, i) => {
-        const selected = document.querySelector(`input[name=${q}]:checked`);
-        const correct = answers[q];
-        if (selected && selected.value === correct) score++;
+        card.innerHTML = `
+          <h3>${test.title}</h3>
+          <p><strong>Category:</strong> ${test.category}</p>
+          <p><strong>Tag:</strong> ${test.tag}</p>
+          <button onclick="startTest('${test.id}')">Start Test</button>
+        `;
 
-        answerList += `
-          <li>
-            <strong>Q${i+1}:</strong> Correct Answer: ${correct} <br>
-            <em>${descriptions[q]}</em><br>
-            <a href="${videos[q]}" target="_blank">📺 Reference Video</a>
-          </li>`;
+        container.appendChild(card);
       });
+    }
 
-      document.getElementById("score").textContent = score;
-      document.getElementById("answerList").innerHTML = answerList;
-      document.getElementById("results").classList.remove("hidden");
-    });
+    function startTest(testId) {
+      // Redirect to test-taking page
+      window.location.href = `take_test.html?id=${testId}`;
+    }
+
+    // Load tests on page load
+    fetchTests();
   </script>
 </body>
 </html>

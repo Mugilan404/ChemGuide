@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemGuide | Upload Material</title>
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+  <header>
+    <nav class="navbar">
+      <div class="logo">
+        <img src="assets/images/logo.png" alt="ChemGuide Logo">
+        <span>ChemGuide</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="study_materials.html">Study Materials</a></li>
+        <li><a href="online_test.html">Online Test</a></li>
+        <li><a href="login.html">Account</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section class="form-container">
+    <h2>📚 Upload Study Material</h2>
+    <form id="uploadMaterialForm" enctype="multipart/form-data">
+      <label>Title</label>
+      <input type="text" name="title" required>
+
+      <label>Category</label>
+      <input type="text" name="category" placeholder="Ex: Notes, Formula, Question Bank">
+
+      <label>Tag</label>
+      <input type="text" name="tag" placeholder="Ex: Organic, Physical, Inorganic">
+
+      <label>Upload File (PDF)</label>
+      <input type="file" name="file" accept=".pdf" required>
+
+      <button type="submit" class="btn">Upload Material</button>
+    </form>
+  </section>
+
+  <footer>
+    <p>© 2025 ChemGuide | Material Upload</p>
+  </footer>
+
+  <script>
+    document.getElementById("uploadMaterialForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+
+      const res = await fetch("/api/materials", {
+        method: "POST",
+        body: formData
+      });
+
+      if (res.ok) {
+        alert("✅ Material uploaded successfully!");
+        e.target.reset();
+      } else {
+        alert("❌ Failed to upload material");
+      }
+    });
+  </script>
+</body>
+</html>
