@@ -68,6 +68,8 @@ header {
   font-size: 26px;
   color: #fff;
   cursor: pointer;
+  background: none;
+  border: none;
 }
 
 /* ===== Section Containers ===== */
@@ -141,6 +143,7 @@ form button {
   display: flex;
   justify-content: space-between;
   gap: 20px;
+  flex-wrap: wrap;
 }
 
 .feature-card,
@@ -151,6 +154,7 @@ form button {
   border-radius: 10px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  min-width: 250px;
 }
 .feature-card img {
   width: 80px;
@@ -162,6 +166,8 @@ form button {
   width: 100%;
   border-collapse: collapse;
   margin-top: 18px;
+  overflow-x: auto;
+  display: block;
 }
 .dashboard-table th,
 .dashboard-table td {
@@ -221,9 +227,12 @@ footer {
 }
 
 @media (max-width: 768px) {
+  /* ✅ Show hamburger on mobile */
   .menu-toggle {
     display: block;
   }
+
+  /* ✅ Hide nav links initially */
   .nav-links {
     position: absolute;
     right: 0;
@@ -234,6 +243,7 @@ footer {
     display: none;
     padding: 20px;
     border-radius: 0 0 10px 10px;
+    z-index: 999;
   }
   .nav-links.show {
     display: flex;
@@ -241,9 +251,17 @@ footer {
   .nav-links li {
     margin: 12px 0;
   }
+
+  /* ✅ Stack cards and stats */
   .features,
   .dashboard-stats {
     flex-direction: column;
+  }
+
+  /* ✅ Make section edges cleaner */
+  section {
+    margin: 20px 10px;
+    padding: 20px;
   }
 }
 
@@ -259,5 +277,11 @@ footer {
   .dashboard-table td {
     padding: 8px;
     font-size: 12px;
+  }
+
+  /* ✅ Nav links full-width on very small screens */
+  .nav-links {
+    width: 100%;
+    border-radius: 0;
   }
 }
