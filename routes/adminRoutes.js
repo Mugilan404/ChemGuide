@@ -5,25 +5,52 @@ const materialController = require('../controllers/materialController');
 const testController = require('../controllers/testController');
 
 // ================== ADMIN AUTH ==================
+// Admin login route
 router.post('/login', adminController.login);
-router.post('/register', adminController.register); // optional, if you allow admin registration
+
+// Admin registration route (optional, if you allow admin registration)
+router.post('/register', adminController.register); 
+
+// Log the controller methods to ensure they're correctly loaded
+console.log("Admin Controller Methods:", adminController);
 
 // ================== USER MANAGEMENT ==================
+// Fetch all users
 router.get('/users', adminController.getAllUsers);
+
+// Fetch a user by ID
 router.get('/users/:id', adminController.getUserById);
+
+// Update user details
 router.put('/users/:id', adminController.updateUser);
+
+// Delete a user
 router.delete('/users/:id', adminController.deleteUser);
 
 // ================== STUDY MATERIAL MANAGEMENT ==================
-router.get('/materials', materialController.getAllMaterials); // list all materials
-router.post('/materials', materialController.addMaterial);   // add new material
-router.put('/materials/:id', materialController.updateMaterial); // update existing material
-router.delete('/materials/:id', materialController.deleteMaterial); // delete material
+// Fetch all materials
+router.get('/materials', materialController.getAllMaterials);
+
+// Add new material
+router.post('/materials', materialController.addMaterial);
+
+// Update existing material
+router.put('/materials/:id', materialController.updateMaterial);
+
+// Delete material
+router.delete('/materials/:id', materialController.deleteMaterial);
 
 // ================== TEST / QUIZ MANAGEMENT ==================
+// Fetch all tests
 router.get('/tests', testController.getAllTests);
+
+// Add new test
 router.post('/tests', testController.addTest);
+
+// Update an existing test
 router.put('/tests/:id', testController.updateTest);
+
+// Delete test
 router.delete('/tests/:id', testController.deleteTest);
 
 // ================== OTHERS ==================

@@ -1,60 +1,26 @@
-const { DataTypes } = require('sequelize');
-const db = require('../config/db'); // Sequelize connection
-
-// Define Material model
-const Material = db.define('Material', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
-    },
+module.exports = (sequelize, DataTypes) => {
+  const Material = sequelize.define('Material', {
     title: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        validate: {
-            notEmpty: true, // Ensures title is not empty
-            len: [1, 255]   // Ensures title is between 1 and 255 characters
-        }
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     category: {
-        type: DataTypes.ENUM('PGTRB', 'Polytechnic TRB', 'Arts & Science TRB', 'SET'),
-        allowNull: false,
-        validate: {
-            isIn: [['PGTRB', 'Polytechnic TRB', 'Arts & Science TRB', 'SET']] // Ensures valid category
-        }
+      type: DataTypes.STRING,
+      allowNull: false,
     },
     tag: {
-        type: DataTypes.STRING(50),
-        allowNull: true,
-        validate: {
-            len: [1, 50]  // Ensures tag is between 1 and 50 characters (if provided)
-        }
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    file_path: {
-        type: DataTypes.STRING(255),
-        allowNull: false,
-        validate: {
-            notEmpty: true,  // Ensures file path is not empty
-            isUrl: true      // Optionally, you can validate that file_path is a valid URL (if storing URL paths)
-        }
+    file_name: {
+      type: DataTypes.STRING,
+      allowNull: false,
     },
-    created_at: {
-        type: DataTypes.DATE,
-        defaultValue: DataTypes.NOW,
-        allowNull: false
-    }
-}, {
-    tableName: 'materials',
-    timestamps: false,  // Disable Sequelize's automatic createdAt and updatedAt fields
-    hooks: {
-        beforeCreate: (material, options) => {
-            // You can add additional pre-processing logic before creating a new material
-            // e.g., normalizing the file path or title, etc.
-        },
-        beforeUpdate: (material, options) => {
-            // Similar hook for updates, if needed
-        }
-    }
-});
+    file_data: {
+      type: DataTypes.BLOB('long'),
+      allowNull: false,
+    },
+  });
 
-module.exports = Material;
+  return Material;
+};

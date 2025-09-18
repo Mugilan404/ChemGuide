@@ -40,12 +40,13 @@
       </select>
 
       <label for="tag">Tag</label>
-      <input
-        type="text"
-        id="tag"
-        name="tag"
-        placeholder="Ex: Organic, Physical, Inorganic"
-      />
+<select id="tag" name="tag">
+  <option value="">Select a Tag</option> <!-- Empty option as default -->
+  <option value="Organic">Organic</option>
+  <option value="Physical">Physical</option>
+  <option value="Inorganic">Inorganic</option>
+  <!-- Add more options as needed -->
+</select>
 
       <label for="file">Upload File (PDF)</label>
       <input type="file" id="file" name="file" accept=".pdf" required />

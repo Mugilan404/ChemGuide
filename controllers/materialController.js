@@ -1,175 +1,122 @@
-const path = require('path');
-const fs = require('fs');
-const db = require('../config/db');
+const db = require('../models');
 const multer = require('multer');
+const path = require('path');
 
-// Multer storage: save file with original name
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../public/assets/uploads'));
-  },
-  filename: (req, file, cb) => {
-    // Use original name temporarily, we'll rename it later to ensure no conflicts
-    cb(null, file.originalname);
-  }
-});
-
+// Configure multer to store files in memory
 const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024 },  // 10MB max
+  storage: multer.memoryStorage(),  // Store the file in memory
+  limits: { fileSize: 10 * 1024 * 1024 },  // Limit file size to 10MB
   fileFilter: (req, file, cb) => {
     if (file.mimetype !== 'application/pdf') {
-      return cb(new Error('Only PDF files allowed'));
+      return cb(new Error('Only PDF files are allowed'), false);
     }
     cb(null, true);
   }
 });
 
+// Middleware to handle file upload
 exports.uploadMaterial = upload.single('file');
 
-// ================== ADD NEW MATERIAL ==================
-exports.addMaterial = (req, res) => {
-  if (!req.file) return res.status(400).json({ error: 'No file uploaded.' });
+// Add material to database
+exports.addMaterial = async (req, res) => {
+  // Check if a file is provided
+  if (!req.file) {
+    return res.status(400).json({ error: 'No file uploaded.' });
+  }
 
+  // Destructure the fields from the body
   const { title, category, tag } = req.body;
+
+  // Check if required fields are provided
   if (!title || !category || !tag) {
     return res.status(400).json({ error: 'Title, category, and tag are required.' });
   }
 
-  const uploadDir = path.join(__dirname, '../public/assets/uploads');
-  const fileExt = path.extname(req.file.originalname);
-  const newFilename = req.file.originalname; // Use the original filename directly
-
-  const oldPath = path.join(uploadDir, req.file.filename);  // multer saved with original name
-  const newPath = path.join(uploadDir, newFilename);
-
-  // Delete file if it exists to overwrite
-  if (fs.existsSync(newPath)) {
-    fs.unlinkSync(newPath);
-  }
-
-  // Rename after multer upload
-  fs.rename(oldPath, newPath, (err) => {
-    if (err) {
-      console.error('Error renaming file:', err);
-      return res.status(500).json({ error: 'Failed to process uploaded file.' });
-    }
-
-    // Insert into DB with new filename
-    const sql = `
-      INSERT INTO materials (title, category, tag, file_name, created_at)
-      VALUES (?, ?, ?, ?, NOW())
-    `;
-
-    db.query(sql, [title, category, tag, newFilename], (err, results) => {
-      if (err) {
-        console.error('Database error:', err);
-        return res.status(500).json({ error: 'Failed to save material to database.' });
-      }
-
-      res.status(201).json({
-        message: 'Material uploaded successfully!',
-        materialId: results.insertId
-      });
+  try {
+    // Save the PDF file data directly as BLOB in the database
+    const material = await db.Material.create({
+      title,
+      category,
+      tag,
+      file_name: req.file.originalname, // Store the original file name
+      file_data: req.file.buffer,       // Store the binary file data (BLOB)
+      created_at: new Date(),           // This will be set to current timestamp by default
     });
-  });
-};
 
-// ================== GET ALL MATERIALS ==================
-exports.getAllMaterials = (req, res) => {
-  const sql = "SELECT * FROM materials ORDER BY created_at DESC";
-  db.query(sql, (err, results) => {
-    if (err) return res.status(500).json({ error: "Database query failed" });
-
-    res.json(results);
-  });
-};
-
-// ================== GET MATERIAL BY ID ==================
-exports.getMaterialById = (req, res) => {
-  const materialId = req.params.id;
-  const sql = "SELECT * FROM materials WHERE id = ?";
-  db.query(sql, [materialId], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database query failed" });
-    if (results.length === 0) return res.status(404).json({ error: "Material not found" });
-
-    res.json(results[0]);
-  });
+    res.status(201).json({
+      message: 'Material uploaded successfully!',
+      materialId: material.id,
+    });
+  } catch (err) {
+    console.error('Error saving material to database:', err);
+    res.status(500).json({ error: 'Failed to save material to database.' });
+  }
 };
 
 // ================== UPDATE MATERIAL ==================
-exports.updateMaterial = (req, res) => {
-  const materialId = req.params.id;
-  const { title, category, tag } = req.body;
-  const file = req.file;
+exports.updateMaterial = async (req, res) => {
+  try {
+    const materialId = req.params.id;  // Get ID from the URL
+    const { title, category, tag } = req.body;  // Get new data from the request body
 
-  // Fetch current file to delete if replaced
-  const getSql = "SELECT file_name FROM materials WHERE id = ?";
-  db.query(getSql, [materialId], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (results.length === 0) return res.status(404).json({ error: "Material not found" });
+    // Find the material in the database
+    const material = await Material.findByPk(materialId);
 
-    const oldFile = results[0].file_name;
-    let newFileName = oldFile;
-
-    const uploadDir = path.join(__dirname, '../public/assets/uploads');
-
-    if (file) {
-      // Use the original filename (no sanitization)
-      const fileExt = path.extname(file.originalname);
-      newFileName = file.originalname; // Use the original filename from the uploaded file
-      const oldPath = path.join(uploadDir, file.filename);
-      const newPath = path.join(uploadDir, newFileName);
-
-      if (fs.existsSync(newPath)) {
-        fs.unlinkSync(newPath);
-      }
-
-      try {
-        fs.renameSync(oldPath, newPath);
-      } catch (renameErr) {
-        console.error('Error renaming file during update:', renameErr);
-        return res.status(500).json({ error: 'Failed to process uploaded file.' });
-      }
-
-      // Delete old file from server
-      const oldFilePath = path.join(uploadDir, oldFile);
-      if (oldFile && fs.existsSync(oldFilePath)) {
-        fs.unlinkSync(oldFilePath);
-      }
+    if (!material) {
+      return res.status(404).json({ error: 'Material not found' });
     }
 
-    // Update DB record
-    const updateSql = "UPDATE materials SET title = ?, category = ?, tag = ?, file_name = ? WHERE id = ?";
-    db.query(updateSql, [title, category, tag, newFileName, materialId], (err2) => {
-      if (err2) return res.status(500).json({ error: "Failed to update material" });
+    // Update the material with new values
+    material.title = title || material.title;  // Update only if new value is provided
+    material.category = category || material.category;
+    material.tag = tag || material.tag;
 
-      res.json({ message: "Material updated successfully" });
-    });
-  });
+    // Save the updated material
+    await material.save();
+
+    return res.json({ message: 'Material updated successfully', material });
+  } catch (error) {
+    console.error('Error updating material:', error);
+    return res.status(500).json({ error: 'Failed to update material' });
+  }
 };
 
-// ================== DELETE MATERIAL ==================
-exports.deleteMaterial = (req, res) => {
-  const materialId = req.params.id;
+// Get all materials
+exports.getAllMaterials = async (req, res) => {
+  try {
+    const materials = await db.findAll();
+    res.status(200).json(materials);
+  } catch (err) {
+    console.error('Error fetching materials:', err);
+    res.status(500).json({ error: 'Failed to fetch materials.' });
+  }
+};
 
-  const getSql = "SELECT file_name FROM materials WHERE id = ?";
-  db.query(getSql, [materialId], (err, results) => {
-    if (err) return res.status(500).json({ error: "Database error" });
-    if (results.length === 0) return res.status(404).json({ error: "Material not found" });
-
-    const fileName = results[0].file_name;
-    const filePath = path.join(__dirname, '../public/assets/uploads', fileName);
-
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
+// Get material by ID
+exports.getMaterialById = async (req, res) => {
+  try {
+    const material = await db.findByPk(req.params.id);
+    if (!material) {
+      return res.status(404).json({ error: 'Material not found' });
     }
+    res.status(200).json(material);
+  } catch (err) {
+    console.error('Error fetching material by ID:', err);
+    res.status(500).json({ error: 'Failed to fetch material.' });
+  }
+};
 
-    const deleteSql = "DELETE FROM materials WHERE id = ?";
-    db.query(deleteSql, [materialId], (err2) => {
-      if (err2) return res.status(500).json({ error: "Failed to delete material" });
-
-      res.json({ message: "Material deleted successfully" });
-    });
-  });
+// Delete material by ID
+exports.deleteMaterial = async (req, res) => {
+  try {
+    const material = await db.findByPk(req.params.id);
+    if (!material) {
+      return res.status(404).json({ error: 'Material not found' });
+    }
+    await material.destroy();
+    res.status(200).json({ message: 'Material deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting material:', err);
+    res.status(500).json({ error: 'Failed to delete material.' });
+  }
 };
