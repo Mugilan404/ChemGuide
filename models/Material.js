@@ -1,5 +1,5 @@
 const { DataTypes } = require('sequelize');
-const db = require('../config/db'); // your Sequelize connection
+const db = require('../config/db'); // Sequelize connection
 
 // Define Material model
 const Material = db.define('Material', {
@@ -12,19 +12,25 @@ const Material = db.define('Material', {
         type: DataTypes.STRING(255),
         allowNull: false
     },
-    description: {
-        type: DataTypes.TEXT,
+    category: {
+        type: DataTypes.ENUM('PGTRB', 'Polytechnic TRB', 'Arts & Science TRB', 'SET'),
+        allowNull: false
+    },
+    tag: {
+        type: DataTypes.STRING(50),
         allowNull: true
     },
-    file_name: {
+    file_path: {
         type: DataTypes.STRING(255),
         allowNull: false
+    },
+    created_at: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW
     }
 }, {
     tableName: 'materials',
-    timestamps: true,
-    createdAt: 'created_at',
-    updatedAt: false
+    timestamps: false // because your table doesn’t have updated_at
 });
 
 module.exports = Material;
