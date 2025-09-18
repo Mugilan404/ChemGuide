@@ -5,9 +5,92 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ChemGuide | Home</title>
   <link rel="stylesheet" href="assets/css/style.css">
-
-  <!-- 🔹 Favicon -->
   <link rel="icon" href="assets/images/logo.png" type="image/x-icon">
+  <style>
+    /* 🔹 Base Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      position: relative;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img {
+      width: 35px;
+    }
+    .nav-links {
+      display: flex;
+      gap: 20px;
+      list-style: none;
+    }
+    .nav-links li a {
+      text-decoration: none;
+      color: #fff;
+      font-weight: 500;
+    }
+
+    /* 🔹 Hamburger Button */
+    .menu-toggle {
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: #fff;
+      background: none;
+      border: none;
+    }
+
+    /* 🔹 Mobile Styles */
+    @media (max-width: 768px) {
+      .nav-links {
+        position: absolute;
+        top: 60px;
+        right: -100%;
+        flex-direction: column;
+        background: rgba(0, 0, 0, 0.95);
+        width: 220px;
+        padding: 15px;
+        transition: right 0.3s ease-in-out;
+        border-radius: 8px 0 0 8px;
+      }
+      .nav-links.active {
+        right: 0;
+      }
+      .menu-toggle {
+        display: block;
+      }
+    }
+
+    /* Hero Section */
+    .hero {
+      height: 90vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      background-size: cover;
+      background-position: center;
+    }
+    .btn {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      background: #28a745;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+    .btn.secondary {
+      background: #007bff;
+    }
+  </style>
 </head>
 <body>
   <!-- 🔹 Header -->
@@ -17,6 +100,11 @@
         <img src="assets/images/logo.png" alt="ChemGuide Logo">
         <span>ChemGuide</span>
       </div>
+
+      <!-- Hamburger Button -->
+      <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+
+      <!-- Navigation Links -->
       <ul class="nav-links">
         <li><a href="index.html" class="active">Home</a></li>
         <li><a href="study_materials.html">Study Materials</a></li>
@@ -58,6 +146,11 @@
     <p>© 2025 ChemGuide. All rights reserved.</p>
   </footer>
 
+  <script>
+    function toggleMenu() {
+      document.querySelector(".nav-links").classList.toggle("active");
+    }
+  </script>
   <script src="assets/js/main.js"></script>
 </body>
 </html>
