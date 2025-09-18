@@ -14,11 +14,13 @@
         <img src="assets/images/logo.png" alt="ChemGuide Logo">
         <span>ChemGuide</span>
       </div>
-      <ul class="nav-links">
-        <li><a href="index.html">Home</a></li>
+      <!-- Hamburger menu -->
+      <span class="menu-toggle" id="menu-toggle">&#9776;</span>
+      <ul class="nav-links" id="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
         <li><a href="study_materials.html">Study Materials</a></li>
         <li><a href="online_test.html">Online Test</a></li>
-        <li><a href="login.html">Account</a></li>
+        <li><a href="admin_dashboard.html">Account</a></li>
       </ul>
     </nav>
   </header>
@@ -63,6 +65,15 @@
         alert("❌ Failed to upload material");
       }
     });
+
+     // ✅ Mobile menu toggle
+    const menuToggle = document.getElementById("menu-toggle");
+    const navLinks = document.getElementById("nav-links");
+
+    menuToggle.addEventListener("click", () => {
+      navLinks.classList.toggle("show");
+    });
+
   </script>
 </body>
 </html>
