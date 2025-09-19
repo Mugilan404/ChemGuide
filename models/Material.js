@@ -13,13 +13,20 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     file_name: {
-      type: DataTypes.STRING,
+      type: DataTypes.STRING, // just store the filename
       allowNull: false,
     },
-    file_data: {
-      type: DataTypes.BLOB('long'),
+    file_path: {
+      type: DataTypes.STRING, // store relative path to /uploads
       allowNull: false,
     },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  }, {
+    timestamps: false,
+    tableName: "materials"
   });
 
   return Material;
